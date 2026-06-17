@@ -6,6 +6,10 @@ import '../../domain/entities/stadium_entity.dart';
 import '../models/fixture_model.dart';
 
 class FixturesRemoteDatasource {
+  static final FixturesRemoteDatasource _instance = FixturesRemoteDatasource._();
+  factory FixturesRemoteDatasource() => _instance;
+  FixturesRemoteDatasource._();
+
   final Dio _dio = DioClient.instance;
 
   Map<String, String>? _stadiumMap;
@@ -127,12 +131,16 @@ class FixturesRemoteDatasource {
     final Map<String, String> teamIdToName = {
       for (final t in (_cachedTeams ?? [])) t['id'].toString(): t['name_en'] as String? ?? '',
     };
+    final Map<String, String> teamIdToFlag = {
+      for (final t in (_cachedTeams ?? [])) t['id'].toString(): (t['flag'] as String? ?? ''),
+    };
 
     return (_cachedGroups ?? []).map((g) {
       final teams = (g['teams'] as List<dynamic>? ?? []).map((t) {
         final teamId = t['team_id']?.toString() ?? '';
         return GroupStanding(
           teamName: teamNameEs(teamIdToName[teamId] ?? ''),
+          flag: teamIdToFlag[teamId],
           played: int.tryParse(t['mp']?.toString() ?? '0') ?? 0,
           won: int.tryParse(t['w']?.toString() ?? '0') ?? 0,
           drawn: int.tryParse(t['d']?.toString() ?? '0') ?? 0,

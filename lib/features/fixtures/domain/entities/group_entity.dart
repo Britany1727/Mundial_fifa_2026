@@ -1,5 +1,6 @@
 class GroupStanding {
   final String teamName;
+  final String? flag;
   final int played;
   final int won;
   final int drawn;
@@ -11,6 +12,7 @@ class GroupStanding {
 
   const GroupStanding({
     required this.teamName,
+    this.flag,
     required this.played,
     required this.won,
     required this.drawn,

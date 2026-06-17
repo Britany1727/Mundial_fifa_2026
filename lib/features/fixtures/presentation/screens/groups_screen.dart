@@ -94,6 +94,8 @@ class _GroupCard extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: const [
+                SizedBox(width: 24),
+                SizedBox(width: 6),
                 Expanded(child: Text('Equipo',
                     style: TextStyle(color: Color(0xFF8FA8C0), fontSize: 11, fontWeight: FontWeight.w600))),
                 SizedBox(width: 20, child: Text('PJ', textAlign: TextAlign.center,
@@ -133,6 +135,19 @@ class _StandingRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
+          SizedBox(
+            width: 24,
+            height: 16,
+            child: standing.flag != null && standing.flag!.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(2),
+                    child: Image.network(standing.flag!,
+                        width: 24, height: 16, fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(Icons.flag, color: Colors.white38, size: 16)),
+                  )
+                : const Icon(Icons.flag, color: Colors.white38, size: 16),
+          ),
+          const SizedBox(width: 6),
           Expanded(
             child: Text(standing.teamName,
                 style: const TextStyle(color: Colors.white, fontSize: 13),
