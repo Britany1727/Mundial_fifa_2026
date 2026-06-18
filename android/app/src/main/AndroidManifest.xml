@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+<uses-permission android:name="android.permission.INTERNET"/>
+
+
     <application
         android:label="mundial_fifa_2026"
         android:name="${applicationName}"

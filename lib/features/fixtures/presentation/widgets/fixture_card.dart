@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../domain/entities/fixture_entity.dart';
+import '../theme/wc_colors.dart';
 
 class FixtureCard extends StatelessWidget {
   final FixtureEntity fixture;
@@ -11,176 +13,227 @@ class FixtureCard extends StatelessWidget {
     required this.onTap,
   });
 
+  Widget _flag3d(String? url, double size) {
+    if (url == null || url.isEmpty) {
+      return Container(
+        width: size,
+        height: size * 0.6,
+        decoration: BoxDecoration(
+          color: WcColors.navyDark,
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x14FFFFFF),
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Icon(Icons.flag, color: WcColors.textMuted, size: size * 0.35),
+      );
+    }
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1FFFFFFF),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Color(0x144FC3F7),
+            blurRadius: 14,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: Image.network(
+          url,
+          width: size,
+          height: size * 0.6,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Container(
+            width: size,
+            height: size * 0.6,
+            color: WcColors.navyDark,
+            child: Icon(Icons.flag, color: WcColors.textMuted, size: size * 0.35),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final badge = fixture.timeBadge;
+    final groupLabel = fixture.group != null && fixture.group!.isNotEmpty
+        ? fixture.group!
+        : fixture.round;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      color: const Color(0xFF1A2F4A),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: onTap,
+      color: WcColors.cardBg,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // Fase + badge
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    fixture.round,
-                    style: const TextStyle(
-                      color: Color(0xFFFFC300),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  if (badge.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: fixture.status == 'LIVE'
-                            ? Colors.redAccent
-                            : const Color(0xFF0A3D62),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        badge,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-                ],
+        side: BorderSide(color: WcColors.divider.withValues(alpha: 0.2)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.08,
+              child: Image.asset(
+                'assets/images/mascotas.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
               ),
-              const SizedBox(height: 10),
-
-              // Equipos, marcador, puntos y banderas
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                fixture.homeTeam,
-                                textAlign: TextAlign.end,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            if (fixture.homeFlag != null && fixture.homeFlag!.isNotEmpty) ...[
-                              const SizedBox(width: 6),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(2),
-                                child: Image.network(fixture.homeFlag!,
-                                    width: 20, height: 14, fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) => const Icon(Icons.flag, color: Colors.white38, size: 14)),
-                              ),
-                            ],
-                          ],
-                        ),
-                        if (fixture.homePoints != null)
-                          Text(
-                            '${fixture.homePoints} pts',
-                            style: const TextStyle(
-                              color: Color(0xFFFFC300),
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: fixture.notStarted
-                          ? const Color(0xFF0A3D62)
-                          : const Color(0xFF27AE60),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      fixture.scoreDisplay,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            if (fixture.awayFlag != null && fixture.awayFlag!.isNotEmpty) ...[
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(2),
-                                child: Image.network(fixture.awayFlag!,
-                                    width: 20, height: 14, fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) => const Icon(Icons.flag, color: Colors.white38, size: 14)),
-                              ),
-                              const SizedBox(width: 6),
-                            ],
-                            Flexible(
-                              child: Text(
-                                fixture.awayTeam,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        if (fixture.awayPoints != null)
-                          Text(
-                            '${fixture.awayPoints} pts',
-                            style: const TextStyle(
-                              color: Color(0xFFFFC300),
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 10),
-
-              // Estadio o info
-              if (fixture.stadium != null)
-                Text(
-                  fixture.stadium!,
-                  style: const TextStyle(
-                    color: Color(0xFF8FA8C0),
-                    fontSize: 12,
-                  ),
-                ),
-            ],
+            ),
           ),
-        ),
+          InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        groupLabel,
+                        style: const TextStyle(
+                          color: WcColors.gold,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      if (badge.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: fixture.status == 'LIVE'
+                                ? WcColors.live
+                                : WcColors.navyDark,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            badge,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _flag3d(fixture.homeFlag, 56),
+                            const SizedBox(height: 8),
+                            Text(
+                              fixture.homeTeam,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: WcColors.textPrimary,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (fixture.homePoints != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Text(
+                                  '${fixture.homePoints} pts',
+                                  style: const TextStyle(
+                                    color: WcColors.success,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: WcColors.success,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          fixture.scoreDisplay,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _flag3d(fixture.awayFlag, 56),
+                            const SizedBox(height: 8),
+                            Text(
+                              fixture.awayTeam,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: WcColors.textPrimary,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (fixture.awayPoints != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Text(
+                                  '${fixture.awayPoints} pts',
+                                  style: const TextStyle(
+                                    color: WcColors.success,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  if (fixture.stadium != null || fixture.notStarted)
+                    Text(
+                      '${fixture.stadium ?? ''}${fixture.stadium != null && fixture.notStarted ? ' · ' : ''}${fixture.notStarted ? DateFormat('HH:mm', 'es').format(fixture.dateLocal) : ''}',
+                      style: const TextStyle(
+                        color: WcColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

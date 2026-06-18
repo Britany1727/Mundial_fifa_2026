@@ -160,12 +160,17 @@ class FixturesRemoteDatasource {
           points: int.tryParse(t['pts']?.toString() ?? '0') ?? 0,
         );
       }).toList();
-      teams.sort((a, b) => b.points.compareTo(a.points));
+      teams.sort((a, b) {
+        final c = b.points.compareTo(a.points);
+        if (c != 0) return c;
+        return b.goalDiff.compareTo(a.goalDiff);
+      });
 
       return GroupEntity(
         name: 'Grupo ${g['name'] ?? ''}',
         standings: teams,
       );
-    }).toList();
+    }).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
   }
 }
