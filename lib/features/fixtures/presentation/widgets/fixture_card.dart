@@ -13,6 +13,8 @@ class FixtureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final badge = fixture.timeBadge;
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       color: const Color(0xFF1A2F4A),
@@ -24,33 +26,73 @@ class FixtureCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // Fase del torneo
-              Text(
-                fixture.round,
-                style: const TextStyle(
-                  color: Color(0xFFFFC300),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
-                ),
+              // Fase + badge
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    fixture.round,
+                    style: const TextStyle(
+                      color: Color(0xFFFFC300),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  if (badge.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: fixture.status == 'LIVE'
+                            ? Colors.redAccent
+                            : const Color(0xFF0A3D62),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        badge,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: 10),
 
-              // Equipos, marcador y puntos
+              // Equipos, marcador, puntos y banderas
               Row(
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          fixture.homeTeam,
-                          textAlign: TextAlign.end,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                fixture.homeTeam,
+                                textAlign: TextAlign.end,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            if (fixture.homeFlag != null && fixture.homeFlag!.isNotEmpty) ...[
+                              const SizedBox(width: 6),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(2),
+                                child: Image.network(fixture.homeFlag!,
+                                    width: 20, height: 14, fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => const Icon(Icons.flag, color: Colors.white38, size: 14)),
+                              ),
+                            ],
+                          ],
                         ),
                         if (fixture.homePoints != null)
                           Text(
@@ -87,13 +129,28 @@ class FixtureCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          fixture.awayTeam,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          children: [
+                            if (fixture.awayFlag != null && fixture.awayFlag!.isNotEmpty) ...[
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(2),
+                                child: Image.network(fixture.awayFlag!,
+                                    width: 20, height: 14, fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => const Icon(Icons.flag, color: Colors.white38, size: 14)),
+                              ),
+                              const SizedBox(width: 6),
+                            ],
+                            Flexible(
+                              child: Text(
+                                fixture.awayTeam,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         if (fixture.awayPoints != null)
                           Text(
@@ -115,7 +172,7 @@ class FixtureCard extends StatelessWidget {
               // Estadio o info
               if (fixture.stadium != null)
                 Text(
-                  '🏟️ ${fixture.stadium}',
+                  fixture.stadium!,
                   style: const TextStyle(
                     color: Color(0xFF8FA8C0),
                     fontSize: 12,

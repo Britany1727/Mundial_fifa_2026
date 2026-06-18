@@ -54,6 +54,8 @@ class FixtureModel extends FixtureEntity {
     required super.dateUtc,
     super.homePoints,
     super.awayPoints,
+    super.homeFlag,
+    super.awayFlag,
     required this.matchDate,
   });
 
@@ -61,6 +63,7 @@ class FixtureModel extends FixtureEntity {
     Map<String, dynamic> json, {
     Map<String, String>? stadiumMap,
     Map<String, int>? pointsMap,
+    Map<String, String>? flagMap,
   }) {
     final rawDate = (json['local_date'] ?? '').toString();
     final parsedDate = _parseLocalDate(rawDate);
@@ -85,6 +88,9 @@ class FixtureModel extends FixtureEntity {
     final stadiumName =
         stadiumMap != null && stadiumId != null ? stadiumMap[stadiumId] : null;
 
+    final homeTeamId = json['home_team_id']?.toString();
+    final awayTeamId = json['away_team_id']?.toString();
+
     return FixtureModel(
       id: int.tryParse(json['id'].toString()) ?? 0,
       homeTeam: teamNameEs(homeTeam),
@@ -99,6 +105,8 @@ class FixtureModel extends FixtureEntity {
       matchDate: matchDate,
       homePoints: pointsMap?[homeTeam],
       awayPoints: pointsMap?[awayTeam],
+      homeFlag: flagMap?[homeTeamId],
+      awayFlag: flagMap?[awayTeamId],
     );
   }
 }

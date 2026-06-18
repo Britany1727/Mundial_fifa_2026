@@ -81,22 +81,58 @@ class _DetailBody extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          // Fase del torneo
-          _ChipLabel(label: fixture.round),
+          // Fase del torneo + badge
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _ChipLabel(label: fixture.round),
+              if (fixture.timeBadge.isNotEmpty) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: fixture.status == 'LIVE'
+                        ? Colors.redAccent
+                        : const Color(0xFF0A3D62),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    fixture.timeBadge,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
           const SizedBox(height: 24),
-
           // Marcador principal
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
-                child: Text(
-                  fixture.homeTeam,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
+                child: Column(
+                  children: [
+                    if (fixture.homeFlag != null && fixture.homeFlag!.isNotEmpty)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: Image.network(fixture.homeFlag!,
+                            width: 32, height: 22, fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Icon(Icons.flag, color: Colors.white38, size: 20)),
+                      ),
+                    const SizedBox(height: 6),
+                    Text(
+                      fixture.homeTeam,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
               ),
               Container(
@@ -117,13 +153,25 @@ class _DetailBody extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Text(
-                  fixture.awayTeam,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
+                child: Column(
+                  children: [
+                    if (fixture.awayFlag != null && fixture.awayFlag!.isNotEmpty)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: Image.network(fixture.awayFlag!,
+                            width: 32, height: 22, fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Icon(Icons.flag, color: Colors.white38, size: 20)),
+                      ),
+                    const SizedBox(height: 6),
+                    Text(
+                      fixture.awayTeam,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
               ),
             ],

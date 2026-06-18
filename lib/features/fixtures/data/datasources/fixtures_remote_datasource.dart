@@ -19,6 +19,7 @@ class FixturesRemoteDatasource {
 
   Map<String, String>? _stadiumMap;
   Map<String, int>? _pointsMap;
+  Map<String, String>? _flagMap;
   DateTime? _auxLastFetch;
   List<dynamic>? _cachedStadiums;
   List<dynamic>? _cachedTeams;
@@ -53,6 +54,9 @@ class FixturesRemoteDatasource {
           : (teamsData['teams'] as List<dynamic>? ?? []);
       final Map<String, String> teamIdToName = {
         for (final t in _cachedTeams!) t['id'].toString(): t['name_en'] as String? ?? '',
+      };
+      _flagMap = {
+        for (final t in _cachedTeams!) t['id'].toString(): (t['flag'] as String? ?? ''),
       };
 
       try {
@@ -93,7 +97,7 @@ class FixturesRemoteDatasource {
 
     return all
         .map((e) => FixtureModel.fromJson(e as Map<String, dynamic>,
-            stadiumMap: _stadiumMap, pointsMap: _pointsMap))
+            stadiumMap: _stadiumMap, pointsMap: _pointsMap, flagMap: _flagMap))
         .where((f) => f.matchDate == date)
         .toList();
   }
@@ -109,7 +113,7 @@ class FixturesRemoteDatasource {
           (e) => e['id'].toString() == id.toString(),
         );
     return FixtureModel.fromJson(match,
-        stadiumMap: _stadiumMap, pointsMap: _pointsMap);
+        stadiumMap: _stadiumMap, pointsMap: _pointsMap, flagMap: _flagMap);
   }
 
   // ── Stadiums ──

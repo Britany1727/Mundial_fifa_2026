@@ -11,6 +11,8 @@ class FixtureEntity {
   final DateTime dateUtc;
   final int? homePoints;
   final int? awayPoints;
+  final String? homeFlag;
+  final String? awayFlag;
 
   const FixtureEntity({
     required this.id,
@@ -25,6 +27,8 @@ class FixtureEntity {
     required this.dateUtc,
     this.homePoints,
     this.awayPoints,
+    this.homeFlag,
+    this.awayFlag,
   });
 
   /// Devuelve true si el partido aún no comenzó
@@ -40,4 +44,17 @@ class FixtureEntity {
 
   /// Fecha/hora en zona local del dispositivo
   DateTime get dateLocal => dateUtc.toLocal();
+
+  /// Texto descriptivo del tiempo restante o estado actual
+  String get timeBadge {
+    if (status == 'LIVE') return 'EN VIVO';
+    if (status == 'FT' || status == 'TBD') return '';
+    final diff = dateLocal.difference(DateTime.now());
+    if (diff.isNegative) return '';
+    if (diff.inDays > 1) return 'En ${diff.inDays}d';
+    if (diff.inDays == 1) return 'Mañana';
+    if (diff.inHours > 0) return 'En ${diff.inHours}h ${diff.inMinutes.remainder(60)}m';
+    if (diff.inMinutes > 0) return 'En ${diff.inMinutes}m';
+    return '';
+  }
 }
