@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'core/network/auth_service.dart';
+import 'core/network/dio_client.dart';
 import 'features/fixtures/presentation/screens/main_shell.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('es');
+  // Inicializar auth y dio en segundo plano (no bloquea la UI)
+  AuthService.getInstance().then((_) => DioClient.getInstance());
   runApp(const Mundial2026App());
 }
 

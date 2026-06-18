@@ -10,7 +10,12 @@ class FixturesRemoteDatasource {
   factory FixturesRemoteDatasource() => _instance;
   FixturesRemoteDatasource._();
 
-  final Dio _dio = DioClient.instance;
+  Dio? _dio;
+
+  Future<Dio> get _dioReady async {
+    _dio ??= await DioClient.getInstance();
+    return _dio!;
+  }
 
   Map<String, String>? _stadiumMap;
   Map<String, int>? _pointsMap;
@@ -26,7 +31,7 @@ class FixturesRemoteDatasource {
     }
 
     try {
-      final resStadiums = await _dio.get('/get/stadiums');
+      final resStadiums = await (await _dioReady).get('/get/stadiums');
       final stadiumsData = resStadiums.data;
       _cachedStadiums = stadiumsData is List
           ? stadiumsData
@@ -41,7 +46,7 @@ class FixturesRemoteDatasource {
     }
 
     try {
-      final resTeams = await _dio.get('/get/teams');
+      final resTeams = await (await _dioReady).get('/get/teams');
       final teamsData = resTeams.data;
       _cachedTeams = teamsData is List
           ? teamsData
@@ -51,7 +56,7 @@ class FixturesRemoteDatasource {
       };
 
       try {
-        final resGroups = await _dio.get('/get/groups');
+        final resGroups = await (await _dioReady).get('/get/groups');
         final groupsData = resGroups.data;
         _cachedGroups = groupsData is List
             ? groupsData
@@ -80,7 +85,7 @@ class FixturesRemoteDatasource {
   // ── Fixtures (NO dependen de _ensureAuxData) ──
 
   Future<List<FixtureModel>> getFixturesByDate(String date) async {
-    final response = await _dio.get('/get/games');
+    final response = await (await _dioReady).get('/get/games');
     final data = response.data;
     final List<dynamic> all = data is List
         ? data
@@ -94,7 +99,7 @@ class FixturesRemoteDatasource {
   }
 
   Future<FixtureModel> getFixtureById(int id) async {
-    final response = await _dio.get('/get/games');
+    final response = await (await _dioReady).get('/get/games');
     final data = response.data;
     final List<dynamic> all = data is List
         ? data

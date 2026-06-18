@@ -1,3 +1,3 @@
 class ApiConstants {
-  static const String baseUrl = 'http://82.115.13.31:3050';
+  static const String baseUrl = 'https://worldcup26.ir';
 }
